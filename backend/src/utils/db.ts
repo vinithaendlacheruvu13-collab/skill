@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const connectDB = async (uri?: string) => {
   const mongoUri = uri || process.env.MONGODB_URI;
-  if (!mongoUri) throw new Error("MONGODB_URI is not set in environment");
+  if (!mongoUri || mongoUri.includes("<db_password>")) {
+    console.warn("MongoDB URI is not configured or contains a placeholder. Skipping DB connection for local development.");
+    return;
+  }
 
   try {
     await mongoose.connect(mongoUri, {
